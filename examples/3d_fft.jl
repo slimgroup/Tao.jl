@@ -16,7 +16,7 @@ partition = [1, size]
 
 T = Float32
 
-nx, ny, nz = 10, 10, 10
+nt, nx, ny = 10, 10, 10
 
 Ft = ParDFT(T, nt)
 Fx = ParDFT(Complex{T}, nx)
