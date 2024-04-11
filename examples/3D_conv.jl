@@ -1,5 +1,5 @@
 using Pkg
-Pkg.activate("./path/to/your/environment")
+Pkg.activate("./")
 
 using ParametricOperators
 using CUDA
