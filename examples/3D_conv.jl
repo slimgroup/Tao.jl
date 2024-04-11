@@ -21,9 +21,9 @@ gt, gx, gy = 100, 100, 100
 nt, nx, ny = [gt, gx, gy] .÷ partition
 
 # Define a transform along each dimension
-St = ParMatrix(T, gt)
-Sx = ParMatrix(T, gx)
-Sy = ParMatrix(T, gy)
+St = ParMatrix(T, gt, gt)
+Sx = ParMatrix(T, gx, gx)
+Sy = ParMatrix(T, gy, gy)
 
 # Create and distribute the Kronecker operator than chains together the transforms
 S = Sy ⊗ Sx ⊗ St
