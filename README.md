@@ -48,7 +48,7 @@ Fy = ParDFT(Complex{T}, gy)
 F = Fy ⊗ Fx ⊗ Ft
 
 # Apply the transform on a random input
-x = rand(T, nt, nx, ny) |> gpu
+x = rand(T, gt, gx, gy) |> gpu
 y = F * vec(x)
 ```
 
@@ -122,6 +122,7 @@ using Pkg
 Pkg.activate("./path/to/your/environment")
 
 using ParametricOperators
+using Zygote
 
 T = Float32
 
@@ -139,7 +140,7 @@ S = Sy ⊗ Sx ⊗ St
 θ = init(S) |> gpu
 
 # Apply the transform on a random input
-x = rand(T, nt, nx, ny) |> gpu
+x = rand(T, gt, gx, gy) |> gpu
 y = S(θ) * vec(x)
 
 # Compute the gradient wrt some objective of our parameters
