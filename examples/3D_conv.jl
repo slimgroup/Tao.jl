@@ -2,6 +2,7 @@ using Pkg
 Pkg.activate("./")
 
 using ParametricOperators
+using Zygote
 using CUDA
 using MPI
 

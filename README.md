@@ -109,6 +109,14 @@ You can run the above by doing:
 
 ### 3. Parametrized Convolution on 3D Tensor
 
+Make sure to add necessary dependencies to compute the gradient
+
+```julia
+julia> using Pkg
+julia> Pkg.activate("path/to/your/project")
+julia> Pkg.add("Zygote")
+```
+
 ```julia
 using Pkg
 Pkg.activate("./path/to/your/environment")
@@ -138,7 +146,7 @@ y = S(θ) * vec(x)
 θ′ = gradient(θ -> sum(S(θ) * vec(x)), θ)
 ```
 
-### 2. Distributed Parametrized Convolution of a 3D Tensor:
+### 4. Distributed Parametrized Convolution of a 3D Tensor:
 
 Make sure to add necessary dependencies. You might also need to load a proper MPI implementation based on your hardware.
 
@@ -147,6 +155,7 @@ julia> using Pkg
 julia> Pkg.activate("path/to/your/project")
 julia> Pkg.add("MPI")
 julia> Pkg.add("CUDA")
+julia> Pkg.add("Zygote")
 ```
 
 Copy the following code into a `.jl` file
