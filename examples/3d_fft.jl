@@ -18,7 +18,7 @@ T = Float32
 
 # Global and Local Partition
 gt, gx, gy = 100, 100, 100
-[nt, nx, ny] = [gt, gx, gy] .÷ partition
+nt, nx, ny = [gt, gx, gy] .÷ partition
 
 Ft = ParDFT(T, gt)
 Fx = ParDFT(Complex{T}, gx)
