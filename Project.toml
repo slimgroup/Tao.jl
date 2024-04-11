@@ -1,7 +1,7 @@
 name = "ParametricOperators"
 uuid = "db9e0614-c73c-4112-a40c-114e5b366d0d"
 authors = ["Richard Rex <richardr2926@gatech.edu>", "Thomas Grady <tgrady@gatech.edu>"]
-version = "1.1.1"
+version = "1.1.2"
 
 [compat]
 julia = "1.9.4"
