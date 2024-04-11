@@ -128,7 +128,7 @@ Sy = ParMatrix(T, gy, gy)
 S = Sy ⊗ Sx ⊗ St
 
 # Parametrize our transform
-θ = init(S)
+θ = init(S) |> gpu
 
 # Apply the transform on a random input
 x = rand(T, nt, nx, ny) |> gpu
@@ -183,7 +183,7 @@ S = Sy ⊗ Sx ⊗ St
 S = distribute(S, partition)
 
 # Parametrize our transform
-θ = init(S)
+θ = init(S) |> gpu
 
 # Apply the transform on a random input
 x = rand(T, nt, nx, ny) |> gpu
