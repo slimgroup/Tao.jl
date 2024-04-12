@@ -1,6 +1,9 @@
 # ParametricOperators.jl
 
-[![][license-img]][license-status] 
+[![][license-img]][license-status]
+[![Documenter](https://github.com/slimgroup/ParametricOperators.jl/actions/workflows/Documenter.yml/badge.svg)](https://github.com/slimgroup/ParametricOperators.jl/actions/workflows/Documenter.yml)
+[![TagBot](https://github.com/slimgroup/ParametricOperators.jl/actions/workflows/TagBot.yml/badge.svg)](https://github.com/slimgroup/ParametricOperators.jl/actions/workflows/TagBot.yml)
+
 <!-- [![][zenodo-img]][zenodo-status] -->
 
 ParametricOperators.jl is a Julia Language-based scientific library designed to facilitate the creation and manipulation of tensor operations involving large-scale data using Kronecker products. It provides an efficient and mathematically consistent way to express tensor programs and distribution in the context of machine learning.
@@ -16,13 +19,17 @@ ParametricOperators.jl is a Julia Language-based scientific library designed to 
 
    ```julia
    julia> using Pkg
-   julia> Pkg.activate("path/to/your/project")
+   julia> Pkg.activate("path/to/your/environment")
    julia> Pkg.add("ParametricOperators")
    ```
 
 This will add `ParametricOperators.jl` as dependency to your project
 
-## Examples
+## Documentation
+
+[Detailed Documentation hosted here](https://slimgroup.github.io/ParametricOperators.jl)
+
+## Some Examples
 
 ### 1. FFT of 3D Tensor
 
@@ -55,7 +62,7 @@ Make sure to add necessary dependencies. You might also need to load a proper MP
 
 ```julia
 julia> using Pkg
-julia> Pkg.activate("path/to/your/project")
+julia> Pkg.activate("path/to/your/environment")
 julia> Pkg.add("MPI")
 julia> Pkg.add("CUDA")
 ```
@@ -111,7 +118,7 @@ Make sure to add necessary dependencies to compute the gradient
 
 ```julia
 julia> using Pkg
-julia> Pkg.activate("path/to/your/project")
+julia> Pkg.activate("path/to/your/environment")
 julia> Pkg.add("Zygote")
 ```
 
@@ -151,7 +158,7 @@ Make sure to add necessary dependencies. You might also need to load a proper MP
 
 ```julia
 julia> using Pkg
-julia> Pkg.activate("path/to/your/project")
+julia> Pkg.activate("path/to/your/environment")
 julia> Pkg.add("MPI")
 julia> Pkg.add("CUDA")
 julia> Pkg.add("Zygote")
