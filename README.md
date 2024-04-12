@@ -27,9 +27,9 @@ This will add `ParametricOperators.jl` as dependency to your project
 
 ## Documentation
 
-[Detailed Documentation hosted here](https://slimgroup.github.io/ParametricOperators.jl)
+Check out the [Documentation](https://slimgroup.github.io/ParametricOperators.jl) for more!
 
-## Some Examples
+## Few Examples
 
 ### 1. FFT of 3D Tensor
 

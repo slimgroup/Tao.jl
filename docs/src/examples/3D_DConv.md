@@ -1,4 +1,4 @@
-### Distributed Parametrized Convolution of a 3D Tensor:
+### Distributed Parametrized Convolution of a 3D Tensor
 
 Make sure to add necessary dependencies. You might also need to load a proper MPI implementation based on your hardware.
 

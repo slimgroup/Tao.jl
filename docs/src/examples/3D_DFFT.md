@@ -1,4 +1,4 @@
-### Distributed FFT of a 3D Tensor:
+### Distributed FFT of a 3D Tensor
 
 Make sure to add necessary dependencies. You might also need to load a proper MPI implementation based on your hardware.
 
