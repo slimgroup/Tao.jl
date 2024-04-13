@@ -6,3 +6,4 @@ examples/.ipynb_checkpoints
 *.svg
 *.png
 *.dot
+!logo.png
