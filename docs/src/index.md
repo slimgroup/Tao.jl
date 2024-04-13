@@ -7,7 +7,7 @@ Modern machine learning and scientific computing is increasingly interested in t
 !!! note "Example usage of ParametricOperators.jl"
     [`ParametricDFNOs.jl`](https://github.com/slimgroup/ParametericDFNOs.jl) is a library built on top of [`ParametricOperators.jl`](https://github.com/slimgroup/ParametricOperators.jl) that allows for large scale machine learning using Fourier Neural Operators (FNOs)
 
-Read our paper [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ).
+Read our paper [here](https://www.youtube.com/watch?v=xvFZjo5PgG0).
 
 ### Authors
 
