@@ -17,6 +17,9 @@ julia> Pkg.activate("path/to/your/environment")
 julia> Pkg.add("ParametricOperators")
 ```
 
+!!! note "Jump right in"
+    To get started, you can also try running some [examples](https://github.com/turquoisedragon2926/ParametricOperators-Examples)
+
 ## Simple Operator
 
 Make sure to include the package in your environment
@@ -46,7 +49,7 @@ A(θ) * x
 
 ## Gradient Computation
 
-!!! note "Limited AD support"
+!!! warning "Limited AD support"
     Current support only provided for Zygote.jl
 
 Make sure to include an AD package in your environment

@@ -1,6 +1,3 @@
-using Pkg
-Pkg.activate("./path/to/your/environment")
-
 using ParametricOperators
 using Zygote
 

@@ -1,9 +1,7 @@
-using Pkg
-Pkg.activate("./path/to/your/environment")
-
 using ParametricOperators
 using CUDA
 using MPI
+using Zygote
 
 MPI.Init()
 

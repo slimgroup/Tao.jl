@@ -1,23 +1,29 @@
 ### Distributed Parametrized Convolution of a 3D Tensor
 
+!!! note "Jump right in"
+    To get started, you can run some [examples](https://github.com/turquoisedragon2926/ParametricOperators-Examples)
+
 Make sure to add necessary dependencies. You might also need to load a proper MPI implementation based on your hardware.
 
 ```julia
-julia> using Pkg
-julia> Pkg.activate("path/to/your/environment")
-julia> Pkg.add("MPI")
-julia> Pkg.add("CUDA")
-julia> Pkg.add("Zygote")
+julia> ]
+(v1.9) activate /path/to/your/environment
+(env) add MPI CUDA ParametricOperators
 ```
 
-Copy the following code into a `.jl` file
-```julia
-using Pkg
-Pkg.activate("./path/to/your/environment")
+!!! warning "To run on multiple GPUs"
+    If you wish to run on multiple GPUs and the below code fails to scale, make sure the GPUs are binded to different tasks. The approach we use is to unbind our GPUs on request and assign manually:
 
+    ```julia
+    CUDA.device!(rank % 4)
+    ```
+
+    which might be different if you have more or less than 4 GPUs per node. Also, make sure your MPI distribution is functional.
+```julia
 using ParametricOperators
 using CUDA
 using MPI
+using Zygote
 
 MPI.Init()
 
@@ -57,6 +63,18 @@ y = S(θ) * vec(x)
 MPI.Finalize()
 ```
 
-You can run the above by doing:
+If you have [`mpiexecjl`](https://juliaparallel.org/MPI.jl/stable/usage/#Installation) set up, you can run the above by doing:
 
-`srun -n N_TASKS julia code_above.jl`
+```shell
+mpiexecjl --project=/path/to/your/environment -n NTASKS julia code_above.jl
+```
+
+OR if you have a HPC cluster with [`slurm`](https://slurm.schedmd.com/documentation.html) set up, you can do:
+
+```shell
+salloc --gpus=NTASKS --time=01:00:00 --ntasks=NTASKS --gpus-per-task=1 --gpu-bind=none
+srun julia --project=/path/to/your/environment code_above.jl
+```
+
+!!! warning "Allocation"
+    Your `salloc` might look different based on your HPC cluster
