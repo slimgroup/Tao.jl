@@ -25,5 +25,6 @@ makedocs(
 deploydocs(
     repo = "github.com/slimgroup/ParametricOperators.jl.git",
     devurl = "dev",
-    devbranch = "add-documentation",
+    devbranch = "main",
+    versions = ["dev" => "dev", "stable" => "v^"],
 )
