@@ -12,7 +12,7 @@ julia> ]
 ```
 
 !!! warning "To run on multiple GPUs"
-    If you wish to run on multiple GPUs and the below code fails to scale, make sure the GPUs are binded to different tasks. The approach we use is to unbind our GPUs on request and assign manually:
+    If you wish to run on multiple GPUs, make sure the GPUs are binded to different tasks. The approach we use is to unbind our GPUs on request and assign manually:
 
     ```julia
     CUDA.device!(rank % 4)

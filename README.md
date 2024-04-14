@@ -6,7 +6,10 @@
 
 <!-- [![][zenodo-img]][zenodo-status] -->
 
-ParametricOperators.jl is a Julia Language-based scientific library designed to facilitate the creation and manipulation of tensor operations involving large-scale data using Kronecker products. It provides an efficient and mathematically consistent way to express tensor programs and distribution in the context of machine learning.
+`ParametricOperators.jl` is a Julia Language-based scientific library designed to facilitate the creation and manipulation of tensor operations involving large-scale data using Kronecker products. It provides an efficient and mathematically consistent way to express tensor programs and distribution in the context of machine learning.
+
+> [!NOTE]  
+> [`ParametericDFNOs.jl`](https://github.com/slimgroup/ParametericDFNOs.jl/) is built on `ParametricOperators.jl`
 
 ## Features
 - <b>Kronecker Product Operations:</b> Implement tensor operations using Kronecker products for linear operators acting along multiple dimensions.
@@ -27,7 +30,7 @@ This will add `ParametricOperators.jl` as dependency to your project
 
 ## Documentation
 
-Check out the [Documentation](https://slimgroup.github.io/ParametricOperators.jl) for more or you get started by running some [examples](https://github.com/turquoisedragon2926/ParametricOperators.jl-Examples)!
+Check out the [Documentation](https://slimgroup.github.io/ParametricOperators.jl) for more or get started by running some [examples](https://github.com/turquoisedragon2926/ParametricOperators.jl-Examples)!
 
 ## Issues
 
