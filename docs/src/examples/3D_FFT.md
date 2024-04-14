@@ -1,7 +1,7 @@
 ### FFT of 3D Tensor
 
 !!! note "Jump right in"
-    To get started, you can run some [examples](https://github.com/turquoisedragon2926/ParametricOperators-Examples)
+    To get started, you can run some [examples](https://github.com/turquoisedragon2926/ParametricOperators.jl-Examples)
 
 ```julia
 using ParametricOperators

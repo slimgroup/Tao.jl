@@ -1,7 +1,7 @@
 ### Distributed Parametrized Convolution of a 3D Tensor
 
 !!! note "Jump right in"
-    To get started, you can run some [examples](https://github.com/turquoisedragon2926/ParametricOperators-Examples)
+    To get started, you can run some [examples](https://github.com/turquoisedragon2926/ParametricOperators.jl-Examples)
 
 Make sure to add necessary dependencies. You might also need to load a proper MPI implementation based on your hardware.
 

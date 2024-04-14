@@ -18,7 +18,7 @@ julia> Pkg.add("ParametricOperators")
 ```
 
 !!! note "Jump right in"
-    To get started, you can also try running some [examples](https://github.com/turquoisedragon2926/ParametricOperators-Examples)
+    To get started, you can also try running some [examples](https://github.com/turquoisedragon2926/ParametricOperators.jl-Examples)
 
 ## Simple Operator
 

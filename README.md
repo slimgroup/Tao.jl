@@ -27,7 +27,7 @@ This will add `ParametricOperators.jl` as dependency to your project
 
 ## Documentation
 
-Check out the [Documentation](https://slimgroup.github.io/ParametricOperators.jl) for more or you get started by running some [examples](https://github.com/turquoisedragon2926/ParametricOperators-Examples)!
+Check out the [Documentation](https://slimgroup.github.io/ParametricOperators.jl) for more or you get started by running some [examples](https://github.com/turquoisedragon2926/ParametricOperators.jl-Examples)!
 
 ## Issues
 
