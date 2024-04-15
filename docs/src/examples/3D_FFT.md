@@ -1,3 +1,9 @@
+### FFT of 3D Tensor
+
+!!! note "Jump right in"
+    To get started, you can run some [examples](https://github.com/turquoisedragon2926/ParametricOperators.jl-Examples)
+
+```julia
 using ParametricOperators
 
 T = Float32
@@ -15,3 +21,9 @@ F = Fy ⊗ Fx ⊗ Ft
 # Apply the transform on a random input
 x = rand(T, gt, gx, gy) |> gpu
 y = F * vec(x)
+```
+
+Run the above by doing:
+```shell
+julia --project=/path/to/your/environment code_above.jl
+```

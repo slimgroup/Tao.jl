@@ -1,3 +1,17 @@
+### Parametrized Convolution on 3D Tensor
+
+!!! note "Jump right in"
+    To get started, you can run some [examples](https://github.com/turquoisedragon2926/ParametricOperators.jl-Examples)
+
+Make sure to add necessary dependencies to compute the gradient
+
+```julia
+julia> ]
+(v1.9) activate /path/to/your/environment
+(env) Zygote ParametricOperators
+```
+
+```julia
 using ParametricOperators
 using Zygote
 
@@ -22,3 +36,9 @@ y = S(θ) * vec(x)
 
 # Compute the gradient wrt some objective of our parameters
 θ′ = gradient(θ -> sum(S(θ) * vec(x)), θ)
+```
+
+Run the above by doing:
+```shell
+julia --project=/path/to/your/environment code_above.jl
+```
