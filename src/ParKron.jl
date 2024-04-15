@@ -283,6 +283,7 @@ function distribute(A::ParKron, comm_in::MPI.Comm, comm_out::MPI.Comm, parent_co
 
         # Create repartition operator
         !isequal(dims_prev, dims_i) && pushfirst!(ops, ParRepartition(DDT(Ai), comm_prev, comm_i, tuple(size_curr...)))
+        !isequal(dims_prev, dims_i) && (MPI.Comm_rank(MPI.COMM_WORLD) == 0) && println("Normal Repartition")
 
         # Create Kronecker w/ distributed identities
         idents_dim_lower = []
@@ -303,6 +304,7 @@ function distribute(A::ParKron, comm_in::MPI.Comm, comm_out::MPI.Comm, parent_co
     end
 
     !isequal(dims_prev, dims_out) && pushfirst!(ops, ParRepartition(RDT(A.ops[A.order[end]]), comm_prev, comm_out, tuple(size_curr...)))
+    !isequal(dims_prev, dims_out) && (MPI.Comm_rank(MPI.COMM_WORLD) == 0) && println("Closing Repartition")
 
     return ParCompose(ops...)
 end
