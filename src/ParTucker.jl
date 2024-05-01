@@ -58,8 +58,8 @@ function TuckerRank(A::ParTucker)
     end
     return rank
 end
-
-
+#
+# (A::ParTucker{D,R,L,External})(params) where {D,R,L} = ParParameterized(A, params[A])
 
 function Domain(A::ParTucker)
     i = Domain(A.factors[2])
@@ -78,7 +78,7 @@ function Range(A::ParTucker)
 end
 
 function init!(A::ParTucker{T,N}, d::Parameters)where {N,T}
-    # d[A] = 0 # key - value pair needed for ParTucker
+     d[A] = rand(T,2,2) # key - value pair needed for ParTucker
     init!(A.core,d)
     for j = 1:length(A.factors)
         init!(A.factors[j],d)
@@ -93,41 +93,19 @@ function (w::ParParameterized{T,T,Linear,ParTucker{T,6},V})(x::X) where {T,V,X<:
     b = size(x,2)
     o = Range(w.op.factors[1]) # U1 is o \times k_1
     i = Domain(w.op.factors[2]) # U2 is k_2 \times i
-    # nx = size(x,3)
-    # ny = size(x,4)
-    # ny = size(x,5)
-    Id = ParIdentity(T,b)
     mx = w.op.restriction[1]; my = w.op.restriction[2]; mt = w.op.restriction[3]
-    # x = reshape(x,(i,:))
-    # x = reshape(x,(:,b))
-    # x = restrict_dft(x)
-    # #given x as prod * batch ---> reshape to i,b,2*mx,2*my,mt
     x = reshape(x,(i,b,2*mx,2*my,mt))
-    # z = x
     z = x
- 
-    y = vcat([(Id ⊗ (w.op.factors[1].params*w.op.core.params*(w.op.factors[6].params⊗w.op.factors[5][:,k].params⊗w.op.factors[4][:,j].params ⊗
-    w.op.factors[3][:,i].params⊗w.op.factors[2].params)))*
-      vec(z[:,:,i,j,k]) for i = 1:Domain(w.op.factors[3]), j = 1:Domain(w.op.factors[4]), k = 1:Domain(w.op.factors[5])]...)
-      
-    # y = vcat([(Id ⊗ (w.factors[1](theta)*w.core(theta)*(w.factors[6](theta)⊗w.factors[5](theta)[:,k]⊗w.factors[4](theta)[:,j] ⊗
-    #   w.factors[3](theta)[:,i]⊗w.factors[2](theta))))*
-    #     vec(z[:,:,i,j,k]) for i = 1:Domain(w.factors[3]), j = 1:Domain(w.factors[4]), k = 1:Domain(w.factors[5])]...)
-      
-      y = reshape(y,(o,b,2*mx,2*my,mt))  
-      y = reshape(y,(:,b))
-    
-     return y
+    G = reshape(w.op.core.params,TuckerRank(w.op))
+    # y = ein"abcdef,ia,jb,kc,ld,me,nf,jpklm->ipklm"(G,w.op.factors[1],)
+    y = ein"abcdef,ia,bj,ck,dl,em,fn,jpklm->ipklm"(G,w.op.factors[1],w.op.factors[2:end]...,z)
+    # y = reshape(y,(o,b,2*mx,2*my,mt))  
+    y = reshape(y,(:,b))
+    return y
  end
 
-# function (A::ParTucker{D,R,L,External})(params) where {D,R,L}
-#     B::ParTucker
-#     B.core = A.core(params[A.core])
 
-#     return ParParameterized(A, nothing)
-# end
-
- function to_Dict(A::ParTucker{T,N}) where {N,T}
+function to_Dict(A::ParTucker{T,N}) where {N,T}
 
     rv = Dict{String, Any}(
         "type" => "ParTucker",
@@ -158,3 +136,31 @@ function from_Dict(::Type{ParTucker{T,N}}, d) where {N,T}
     end
     ParTucker(dtype, d["shape"], d["rank"], d["restriction"], mid)
 end
+
+#### some scrap from past code 
+
+#  function (w::ParParameterized{T,T,Linear,ParTucker{T,6},V})(x::X) where {T,V,X<:AbstractMatrix{T}}
+#     b = size(x,2)
+#     o = Range(w.op.factors[1]) # U1 is o \times k_1
+#     i = Domain(w.op.factors[2]) # U2 is k_2 \times i
+#     # nx = size(x,3)
+#     # ny = size(x,4)
+#     # ny = size(x,5)
+#     Id = ParIdentity(T,b)
+#     mx = w.op.restriction[1]; my = w.op.restriction[2]; mt = w.op.restriction[3]
+#     # x = reshape(x,(i,:))
+#     # x = reshape(x,(:,b))
+#     # x = restrict_dft(x)
+#     # #given x as prod * batch ---> reshape to i,b,2*mx,2*my,mt
+#     x = reshape(x,(i,b,2*mx,2*my,mt))
+#     # z = x
+
+
+ 
+    # y = vcat([(Id ⊗ (w.op.factors[1].params*w.op.core.params*(w.op.factors[6].params⊗w.op.factors[5][:,k].params⊗w.op.factors[4][:,j].params ⊗
+    # w.op.factors[3][:,i].params⊗w.op.factors[2].params)))*
+    #   vec(z[:,:,i,j,k]) for i = 1:Domain(w.op.factors[3]), j = 1:Domain(w.op.factors[4]), k = 1:Domain(w.op.factors[5])]...)
+      
+    # y = vcat([(Id ⊗ (w.factors[1](theta)*w.core(theta)*(w.factors[6](theta)⊗w.factors[5](theta)[:,k]⊗w.factors[4](theta)[:,j] ⊗
+    #   w.factors[3](theta)[:,i]⊗w.factors[2](theta))))*
+    #     vec(z[:,:,i,j,k]) for i = 1:Domain(w.factors[3]), j = 1:Domain(w.factors[4]), k = 1:Domain(w.factors[5])]...)
