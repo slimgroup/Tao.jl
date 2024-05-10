@@ -10,11 +10,13 @@ struct ParTucker{T,N}  <: ParLinearOperator{T,T,Parametric,External}
     factors::Vector
     input_dimension::Vector #only for [nx ny nt]
     restriction::Vector #[mx my mt]
+    block_diagonals::Vector #temporary add to test
     id::Any
-    ParTucker(c::ParMatrix,f::Vector,i::Vector,restr::Vector) = new{DDT(c),length(f)}(c,f,i,restr,uuid4(Random.GLOBAL_RNG))
-    ParTucker(c::ParMatrix,f::Vector,i::Vector,restr::Vector,id::Any) = new{DDT(c),length(f)}(c,f,i,restr,id)
+    ParTucker(c::ParMatrix,f::Vector,i::Vector,restr::Vector,block_diagonals::Vector) = new{DDT(c),length(f)}(c,f,i,restr,block_diagonals,uuid4(Random.GLOBAL_RNG))
+    ParTucker(c::ParMatrix,f::Vector,i::Vector,restr::Vector,block_diagonals::Vector,id::Any) = new{DDT(c),length(f)}(c,f,i,restr,block_diagonals,id)
 end
-(A::ParTucker)(layer::Int) = ParTucker(A.core,[A.factors[1:end-1]..., A.factors[end][:,layer]],A.input_dimension,A.restriction)
+
+# (A::ParTucker)(layer::Int) = ParTucker(A.core,[A.factors[1:end-1]..., A.factors[end][:,layer]],A.input_dimension,A.restriction)
 # function ParTucker(type::DataType,size::Vector,rank::Vector,restriction::Vector)
 #     factors = []
 #     n = length(size)
@@ -83,26 +85,26 @@ function init!(A::ParTucker{T,N}, d::Parameters)where {N,T}
     for j = 1:length(A.factors)
         init!(A.factors[j],d)
     end
-    
-
-
+    for j = 1:length(A.block_diagonals)
+        init!(A.block_diagonals[j],d)
+    end
 end
 
-# Kronecker multiplication for spectral convolution for 2D FNO 
-function (w::ParParameterized{T,T,Linear,ParTucker{T,6},V})(x::X) where {T,V,X<:AbstractMatrix{T}}
-    b = size(x,2)
-    o = Range(w.op.factors[1]) # U1 is o \times k_1
-    i = Domain(w.op.factors[2]) # U2 is k_2 \times i
-    mx = w.op.restriction[1]; my = w.op.restriction[2]; mt = w.op.restriction[3]
-    x = reshape(x,(i,b,2*mx,2*my,mt))
-    z = x
-    G = reshape(w.op.core.params,TuckerRank(w.op))
-    # y = ein"abcdef,ia,jb,kc,ld,me,nf,jpklm->ipklm"(G,w.op.factors[1],)
-    y = ein"abcdef,ia,bj,ck,dl,em,fn,jpklm->ipklm"(G,w.op.factors[1],w.op.factors[2:end]...,z)
-    # y = reshape(y,(o,b,2*mx,2*my,mt))  
-    y = reshape(y,(:,b))
-    return y
- end
+# # Kronecker multiplication for spectral convolution for 2D FNO 
+# function (w::ParParameterized{T,T,Linear,ParTucker{T,6},V})(x::X) where {T,V,X<:AbstractMatrix{T}}
+#     b = size(x,2)
+#     o = Range(w.op.factors[1]) # U1 is o \times k_1
+#     i = Domain(w.op.factors[2]) # U2 is k_2 \times i
+#     mx = w.op.restriction[1]; my = w.op.restriction[2]; mt = w.op.restriction[3]
+#     x = reshape(x,(i,b,2*mx,2*my,mt))
+#     z = x
+#     G = reshape(w.op.core.params,TuckerRank(w.op))
+#     # y = ein"abcdef,ia,jb,kc,ld,me,nf,jpklm->ipklm"(G,w.op.factors[1],)
+#     y = ein"abcdef,ia,bj,ck,dl,em,fn,jpklm->ipklm"(G,w.op.factors[1],w.op.factors[2:end]...,z)
+#     # y = reshape(y,(o,b,2*mx,2*my,mt))  
+#     y = reshape(y,(:,b))
+#     return y
+#  end
 
 
 function to_Dict(A::ParTucker{T,N}) where {N,T}
