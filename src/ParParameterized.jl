@@ -19,4 +19,10 @@ params(A::ParParameterized) = A.params
 """
 Parameterize an external operator with a set of params.
 """
-(A::ParParametricOperator{D,R,L,External})(params) where {D,R,L} = ParParameterized(A, params[A])
+(A::ParParametricOperator{D,R,L,External})(params) where {D,R,L} = 
+if  Base.typename(typeof(A)).wrapper  == ParTucker
+  ParParameterized(A, [params[A.core],[params[A.factors[j]] for j = 1:length(A.factors)]])
+else
+    ParParameterized(A,params[A])
+end
+# (A::ParParametricOperator{D,R,L,External})(params) where {D,R,L} = ParParameterized(A, params[A])

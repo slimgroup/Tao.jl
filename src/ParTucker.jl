@@ -50,14 +50,20 @@ function TuckerShape(A::ParTucker)
     return shape
 end
 
+# function TuckerRank(A::ParTucker)
+#     rank = []
+#     push!(rank,Domain(A.factors[1]))
+#     for j = 2:length(A.factors)
+#         push!(rank,Range(A.factors[j]))
+#     end
+#     return rank
+# end
+
 function TuckerRank(A::ParTucker)
-    rank = []
-    push!(rank,Domain(A.factors[1]))
-    for j = 2:length(A.factors)
-        push!(rank,Range(A.factors[j]))
-    end
+    rank = vcat([Domain(A.factors[1])],[Range(A.factors[j]) for j = 2:length(A.factors)]...)
     return rank
 end
+
 #
 # (A::ParTucker{D,R,L,External})(params) where {D,R,L} = ParParameterized(A, params[A])
 
@@ -83,26 +89,43 @@ function init!(A::ParTucker{T,N}, d::Parameters)where {N,T}
     for j = 1:length(A.factors)
         init!(A.factors[j],d)
     end
-    
-
-
 end
 
+
 # Kronecker multiplication for spectral convolution for 2D FNO 
-function (w::ParParameterized{T,T,Linear,ParTucker{T,6},V})(x::X) where {T,V,X<:AbstractMatrix{T}}
+function (w::ParParameterized{T,T,Linear,ParTucker{T,6},V})(x::X) where {T,X<:AbstractMatrix{T},V}
     b = size(x,2)
     o = Range(w.op.factors[1]) # U1 is o \times k_1
     i = Domain(w.op.factors[2]) # U2 is k_2 \times i
     mx = w.op.restriction[1]; my = w.op.restriction[2]; mt = w.op.restriction[3]
-    x = reshape(x,(i,b,2*mx,2*my,mt))
-    z = x
-    G = reshape(w.op.core.params,TuckerRank(w.op))
+    rank = TuckerRank(w.op)
+    x1 = x
+    x1 = reshape(x1,(i,b,2*mx,2*my,mt))
+    z = x1
+    # G = rand(T,TuckerRank(w.op)...)
+    G = reshape(w.params[1],rank...)
     # y = ein"abcdef,ia,jb,kc,ld,me,nf,jpklm->ipklm"(G,w.op.factors[1],)
-    y = ein"abcdef,ia,bj,ck,dl,em,fn,jpklm->ipklm"(G,w.op.factors[1],w.op.factors[2:end]...,z)
+    y = ein"abcdef,ia,bj,ck,dl,em,fn,jpklm->ipklm"(G,w.params[2][1],w.params[2][2:end]...,z)
     # y = reshape(y,(o,b,2*mx,2*my,mt))  
     y = reshape(y,(:,b))
     return y
  end
+
+# # Kronecker multiplication for spectral convolution for 2D FNO 
+# function (w::ParParameterized{T,T,Linear,ParTucker{T,6},V})(x::X) where {T,V,X<:AbstractMatrix{T}}
+#     b = size(x,2)
+#     o = Range(w.op.factors[1]) # U1 is o \times k_1
+#     i = Domain(w.op.factors[2]) # U2 is k_2 \times i
+#     mx = w.op.restriction[1]; my = w.op.restriction[2]; mt = w.op.restriction[3]
+#     x = reshape(x,(i,b,2*mx,2*my,mt))
+#     z = x
+#     G = reshape(w.op.core.params,TuckerRank(w.op))
+#     # y = ein"abcdef,ia,jb,kc,ld,me,nf,jpklm->ipklm"(G,w.op.factors[1],)
+#     y = ein"abcdef,ia,bj,ck,dl,em,fn,jpklm->ipklm"(G,w.op.factors[1],w.op.factors[2:end]...,z)
+#     # y = reshape(y,(o,b,2*mx,2*my,mt))  
+#     y = reshape(y,(:,b))
+#     return y
+#  end
 
 
 function to_Dict(A::ParTucker{T,N}) where {N,T}
