@@ -51,6 +51,7 @@ include("ParTensor.jl")
 include("ParDiagonal.jl")
 include("ParDFT.jl")
 include("ParRestriction.jl")
+include("ParBlockDiagonal.jl")
 
 # Operator serialization
 include("ASTSerialization.jl")

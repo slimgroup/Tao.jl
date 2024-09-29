@@ -22,7 +22,7 @@ distribute(A::ParMatrix) = ParBroadcasted(A)
 
 function init!(A::ParMatrix{T}, d::Parameters) where {T<:Real}
     if A.n == 1
-        d[A] = zeros(T, A.m, A.n)
+        d[A] = rand(T, A.m, A.n) # TODO: Make init function passable
         return
     end
     scale = sqrt(24.0f0 / sum((A.m, A.n)))
@@ -32,7 +32,7 @@ end
 
 function init!(A::ParMatrix{T}, d::Parameters) where {T<:Complex}
     if A.n == 1
-        d[A] = zeros(T, A.m, A.n)
+        d[A] = rand(T, A.m, A.n) # TODO: Make init function passable
         return
     end
     d[A] = rand(T, A.n, A.m)/convert(real(T), sqrt(A.m*A.n))
@@ -43,7 +43,7 @@ end
 (A::ParParameterized{T,T,Linear,ParMatrix{T},V})(x::X) where {T,V,X<:AbstractMatrix{T}} = A.params*x
 (A::ParParameterized{T,T,Linear,ParMatrix{T},V})(x::X) where {T,V,X<:AbstractArray{T,3}} = batched_mul(A.params,x)
 (A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V})(x::X) where {T,V,X<:AbstractVector{T}} = A.params[A.op.op]'*x
-(A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V})(x::X) where {T,V,X<:AbstractMatrix{T}} = A.params[A.op.op]'*x
+(A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V})(x::X) where {T,V,X<:AbstractMatrix{T}} = A.params'*x # A.params[A.op.op]'*x # TODO: Understand why this change is made
 
 *(x::X, A::ParParameterized{T,T,Linear,ParMatrix{T},V}) where {T,V,X<:AbstractVector{T}} = x*A.params
 *(x::X, A::ParParameterized{T,T,Linear,ParMatrix{T},V}) where {T,V,X<:AbstractMatrix{T}} = x*A.params
