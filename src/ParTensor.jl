@@ -32,6 +32,31 @@ function init!(A::ParTensor{N,M,O,T}, d::Parameters) where {N,M,O,T<:Complex}
 end
 
 # TODO: Abstract usage of OMEinsum to another controller
+function (A::ParParameterized{T,T,Linear,ParTensor{3,M,O,T},V})(x::X) where {M,O,T,V,X<:AbstractMatrix{T}}
+    # Hacky batched mul for Just ML4Seismic
+    b = size(x)[2] 
+    ic = A.op.weight_shape[1]
+    oc = A.op.weight_shape[2]
+    nm = A.op.weight_shape[3]
+
+    # input from i(m)b -> bi(m)
+    x = reshape(x, (A.op.input_shape..., b))
+    x = permutedims(x, [3,1,2])
+    x = reshape(x, b, ic, :)
+
+    # params from io(m) -> io(m)
+    params = reshape(A.params, ic, oc, :)
+
+    # output from bo(m) -> (om)b
+    output = batched_mul(x, params)
+    output = reshape(output, b, oc, nm)
+    output = permutedims(output, [2,3,1])
+    output = reshape(output, :, b)
+
+    return output
+end
+
+# TODO: Abstract usage of OMEinsum to another controller
 function (A::ParParameterized{T,T,Linear,ParTensor{4,M,O,T},V})(x::X) where {M,O,T,V,X<:AbstractMatrix{T}}
     # Hacky batched mul for Just ML4Seismic
     b = size(x)[2] 
