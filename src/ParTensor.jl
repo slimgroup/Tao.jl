@@ -28,7 +28,21 @@ function init!(A::ParTensor{N,M,O,T}, d::Parameters) where {N,M,O,T<:Real}
 end
 
 function init!(A::ParTensor{N,M,O,T}, d::Parameters) where {N,M,O,T<:Complex}
-    d[A] = rand(T, A.weight_shape...) ./ convert(real(T), sqrt(prod(A.weight_shape)))
+    # d[A] = rand(T, A.weight_shape...) ./ convert(real(T), sqrt(prod(A.weight_shape)))
+
+    # fan_in = prod(A.weight_shape[2:end])  # Product of all dimensions except the first one
+    # fan_out = A.weight_shape[1]           # The first dimension
+    # limit = sqrt(2) * sqrt(6 / (fan_in + fan_out))
+    
+    # d[A] = (2 * rand(T, A.weight_shape...) .- 1) * limit  # Xavier uniform initialization
+
+    fan_in = prod(A.weight_shape[2:end])  # Product of all dimensions except the first one
+    fan_out = A.weight_shape[1]           # The first dimension
+    limit = sqrt(2) * sqrt(6 / (fan_in + fan_out))
+    
+    # Ensure correct type of the initialized weights (e.g., ComplexF32)
+    rand_weights = (2 * rand(T, A.weight_shape...) .- 1) * limit
+    d[A] = convert(Array{T}, rand_weights)  # Ensure it matches the expected type
 end
 
 # TODO: Abstract usage of OMEinsum to another controller

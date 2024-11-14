@@ -7,10 +7,16 @@ struct ParMatrix{T} <: ParLinearOperator{T,T,Parametric,External}
     m::Int
     n::Int
     id::Any
-    ParMatrix(T::DataType, m::Int, n::Int, id) = new{T}(m, n, id)
-    ParMatrix(m::Int, n::Int, id) = new{Float64}(m, n, id)
-    ParMatrix(T::DataType, m::Int, n::Int) = new{T}(m, n, uuid4(Random.GLOBAL_RNG))
-    ParMatrix(m::Int, n::Int) = new{Float64}(m, n, uuid4(Random.GLOBAL_RNG))
+    init::Function
+
+    function ParMatrix{T}(m::Int, n::Int, id::Any=uuid4(Random.GLOBAL_RNG), init::Function=rand) where T
+        new{T}(m, n, id, init)
+    end
+
+    ParMatrix(T::DataType, m::Int, n::Int, id::Any=uuid4(Random.GLOBAL_RNG), init::Function=rand)=ParMatrix{T}(m, n, id, init)
+    ParMatrix(T::DataType, m::Int, n::Int, init::Function) = ParMatrix{T}(m, n, uuid4(Random.GLOBAL_RNG), init)
+    ParMatrix(m::Int, n::Int, id::Any=uuid4(Random.GLOBAL_RNG), init::Function=rand)=ParMatrix{Float64}(m, n, id, init)
+    ParMatrix(m::Int, n::Int, init::Function) = ParMatrix{Float64}(m, n, uuid4(Random.GLOBAL_RNG), init)
 end
 
 Domain(A::ParMatrix) = A.n
@@ -20,7 +26,12 @@ complexity(A::ParMatrix{T}) where {T} = elementwise_multiplication_cost(T)*A.n*A
 
 distribute(A::ParMatrix) = ParBroadcasted(A)
 
+# function init!(A::ParMatrix{T}, d::Parameters) where {T}
+#     d[A] = A.init(T, A.m, A.n)
+# end
+
 function init!(A::ParMatrix{T}, d::Parameters) where {T<:Real}
+    println("OLD INIT")
     if A.n == 1
         d[A] = rand(T, A.m, A.n) # TODO: Make init function passable
         return
@@ -42,20 +53,20 @@ end
 (A::ParParameterized{T,T,Linear,ParMatrix{T},V})(x::X) where {T,V,X<:AbstractVector{T}} = A.params*x
 (A::ParParameterized{T,T,Linear,ParMatrix{T},V})(x::X) where {T,V,X<:AbstractMatrix{T}} = A.params*x
 (A::ParParameterized{T,T,Linear,ParMatrix{T},V})(x::X) where {T,V,X<:AbstractArray{T,3}} = batched_mul(A.params,x)
-(A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V})(x::X) where {T,V,X<:AbstractVector{T}} = A.params[A.op.op]'*x
-(A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V})(x::X) where {T,V,X<:AbstractMatrix{T}} = A.params'*x # A.params[A.op.op]'*x # TODO: Understand why this change is made
+(A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V})(x::X) where {T,V,X<:AbstractVector{T}} = A.params'*x
+(A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V})(x::X) where {T,V,X<:AbstractMatrix{T}} = A.params'*x
 
 *(x::X, A::ParParameterized{T,T,Linear,ParMatrix{T},V}) where {T,V,X<:AbstractVector{T}} = x*A.params
 *(x::X, A::ParParameterized{T,T,Linear,ParMatrix{T},V}) where {T,V,X<:AbstractMatrix{T}} = x*A.params
-*(x::X, A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V}) where {T,V,X<:AbstractVector{T}} = x*A.params[A.op.op]'
-*(x::X, A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V}) where {T,V,X<:AbstractMatrix{T}} = x*A.params[A.op.op]'
+*(x::X, A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V}) where {T,V,X<:AbstractVector{T}} = x*A.params'
+*(x::X, A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V}) where {T,V,X<:AbstractMatrix{T}} = x*A.params'
 
 +(x::X, A::ParParameterized{T,T,Linear,ParMatrix{T},V}) where {T,V,X<:AbstractVector{T}} = x.+A.params
 +(x::X, A::ParParameterized{T,T,Linear,ParMatrix{T},V}) where {T,V,X<:AbstractArray{T}} = x.+A.params
 +(x::X, A::ParParameterized{T,T,Linear,ParMatrix{T},V}) where {T,V,X<:AbstractMatrix{T}} = x.+A.params
-+(x::X, A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V}) where {T,V,X<:AbstractVector{T}} = x+A.params[A.op.op]'
-+(x::X, A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V}) where {T,V,X<:AbstractArray{T}} = x+A.params[A.op.op]'
-+(x::X, A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V}) where {T,V,X<:AbstractMatrix{T}} = x+A.params[A.op.op]'
++(x::X, A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V}) where {T,V,X<:AbstractVector{T}} = x+A.params'
++(x::X, A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V}) where {T,V,X<:AbstractArray{T}} = x+A.params'
++(x::X, A::ParParameterized{T,T,Linear,ParAdjoint{T,T,Parametric,ParMatrix{T}},V}) where {T,V,X<:AbstractMatrix{T}} = x+A.params'
 
 /(A::ParParameterized{T,T,Linear,ParMatrix{T},V}, x::X) where {T,V,X<:AbstractMatrix{T}} = A.params./x
 
@@ -96,7 +107,7 @@ function Base.getindex(A::ParMatrix{T}, rows, cols) where T
     new_m = length(row_range)
     new_n = length(col_range)
 
-    return ParMatrix(T, new_m, new_n)
+    return ParMatrix(T, new_m, new_n, A.init) # TODO: Track IDs?
 end
 
 function Base.getindex(A::ParParameterized{T,T,Linear,ParMatrix{T},V}, rows, cols) where {T,V}
@@ -107,7 +118,7 @@ function Base.getindex(A::ParParameterized{T,T,Linear,ParMatrix{T},V}, rows, col
     new_n = length(col_range)
     
     new_params = reshape(A.params[rows, cols], new_m, new_n)
-    new_matrix = ParMatrix(T, new_m, new_n)
+    new_matrix = ParMatrix(T, new_m, new_n, A.op.init) # TODO: Track IDs?
 
     return ParParameterized(new_matrix, new_params)
 end

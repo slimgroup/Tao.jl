@@ -41,25 +41,10 @@ rebuild(::ParBlockDiagonal, cs) = ParBlockDiagonal(cs...)
 adjoint(A::ParBlockDiagonal{D,R,P,F,N}) where {D,R,P,F,N} = ParBlockDiagonal(reverse(collect(map(adjoint, A.ops)))...)
 
 function (A::ParBlockDiagonal{D,R,<:Applicable,F,N})(x::X) where {D,R,F,N,X<:AbstractMatrix{D}}
-    start_idx = 1
-    results = []
-
-    for (i, op) in enumerate(A.ops)
-        end_idx = start_idx + Domain(op) - 1
-
-        push!(results, op(x[start_idx:end_idx, :]))
-        start_idx = end_idx + 1
-    end
-
+    dom_sizes = map(Domain, A.ops)
+    dom_cumsum = cumsum([0; dom_sizes])
+    results = map(i -> A.ops[i](x[(dom_cumsum[i]+1):dom_cumsum[i+1], :]), 1:length(A.ops))
     return vcat(results...)
 end
 
 (A::ParBlockDiagonal{D,R,<:Applicable,F,N})(x::X) where {D,R,F,N,X<:AbstractVector{D}} = vec(A(reshape(x, length(x), 1)))
-
-function ChainRulesCore.rrule(A::ParBlockDiagonal{D,R,<:Applicable,F,N}, x::X) where {D,R,F,N,X<:AbstractMatrix{D}}
-    op_out = A(x)
-    function pullback(op)
-        return (NoTangent(), A'(op))
-    end
-    return op_out, pullback
-end

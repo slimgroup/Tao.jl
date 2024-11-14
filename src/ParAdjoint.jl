@@ -16,7 +16,7 @@ Range(A::ParAdjoint) = Domain(A.op)
 children(A::ParAdjoint) = [A.op]
 rebuild(::ParAdjoint, cs) = ParAdjoint(cs[1])
 
-(A::ParAdjoint{D,R,Parametric,F})(params) where {D,R,F} = ParParameterized(adjoint(A.op), params)
+(A::ParAdjoint{D,R,Parametric,F})(params) where {D,R,F} = ParParameterized(adjoint(A.op), params[A.op])
 
 latex_equation(A::ParAdjoint) = "$(latex_equation(A.op))^\\top"
 
